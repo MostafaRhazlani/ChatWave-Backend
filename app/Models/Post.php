@@ -8,7 +8,28 @@ class Post extends Model
 {
     protected $guarded = [];
 
+    // relation with table persons
     public function person() {
         return $this->belongsTo(Person::class);
+    }
+
+    // relation with table tags
+    public function tags() {
+        return $this->belongsToMany(Tag::class, 'post_tag');
+    }
+
+    // relation with table likes
+    public function likes() {
+        return $this->hasMany(Like::class);
+    }
+
+    // relation with table comments
+    public function comments() {
+        return $this->hasMany(Comment::class);
+    }
+
+     // relation with table pages
+    public function page() {
+        return $this->belongsTo(Page::class);
     }
 }

@@ -11,7 +11,33 @@ class Person extends Model
     protected $guarded = [];
     protected $hidden = ['password', 'token'];
 
+    // relation with table post
     public function posts() {
         return $this->hasMany(Post::class);
+    }
+
+    // relation with table comments
+    public function comments() {
+        return $this->hasMany(Comment::class);
+    }
+
+    // relation with table pages
+    public function pages() {
+        return $this->hasMany(Page::class);
+    }
+
+    // relation with table likes
+    public function likes() {
+        return $this->hasMany(Like::class);
+    }
+
+    // relation of sent messages with table messages
+    public function sentMessage() {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
+
+    // relation of received messages with table messages
+    public function receivedMessage() {
+        return $this->belongsTo(Message::class, 'receiver_id');
     }
 }
