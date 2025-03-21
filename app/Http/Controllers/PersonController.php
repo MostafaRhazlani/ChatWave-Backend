@@ -57,9 +57,30 @@ class PersonController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Person $person)
+    public function update(Request $request)
     {
-        //
+        $token = $request->header('Authorization');
+        $token = substr($token, 7);
+
+        $validated = $request->validate([
+            'username' => 'required|max:20|min:5',
+            'full_name' => 'required|min:6',
+            'email' => 'required|email',
+            'description' => 'max:255',
+            'date_birth' => 'required|',
+            'nationality' => 'required',
+            'gender' => 'required|in:male,female',
+            'relationship' => 'required',
+        ]);
+
+        try {
+            $user = Person::where('token', hash('sha256', $token))->first();
+            $user->update($validated);
+
+            return response()->json(['message' => 'user updated successfully', 'user' => $user], 200);
+        } catch (\Throwable $e) {
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
     }
 
     /**
