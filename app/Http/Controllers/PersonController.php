@@ -83,6 +83,32 @@ class PersonController extends Controller
         }
     }
 
+    public function updateImageProfile(Request $request) {
+        $token = $request->header('Authorization');
+        $token = substr($token, 7);
+
+        $validated = $request->validate([
+            'image' => 'required|mimes:png,jpg,jpeg|max:2048'
+        ]);
+
+        if(!$request->hasFile('image')) {
+            return response()->json(['message' => 'No image recieved'], 400);
+        }
+
+        $user = Person::where('token', hash('sha256', $token))->first();
+
+        try {
+
+            $image = $request->file('image');
+            $uniqueImage = uniqid() . '.' . $image->getClientOriginalExtension();
+            $image->storeAs('images', $uniqueImage, 'public');
+            $user->update([ 'image' => $uniqueImage]);
+            return response()->json(['message' => 'image updated successfully', 'image' => $uniqueImage], 200);
+        } catch (\Throwable $e) {
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+    }
+
     /**
      * Remove the specified resource from storage.
      */
