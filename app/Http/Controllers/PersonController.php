@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use App\Models\Person;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class PersonController extends Controller
 {
@@ -59,6 +60,7 @@ class PersonController extends Controller
      */
     public function update(Request $request)
     {
+        dd($request->all());
         $token = $request->header('Authorization');
         $token = substr($token, 7);
 
@@ -104,6 +106,43 @@ class PersonController extends Controller
             $image->storeAs('images', $uniqueImage, 'public');
             $user->update([ 'image' => $uniqueImage]);
             return response()->json(['message' => 'image updated successfully', 'image' => $uniqueImage], 200);
+        } catch (\Throwable $e) {
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+    }
+
+    public function changePassword(Request $request) {
+        dd($request->all());
+        $token = $request->header('Authorization');
+        $token = substr($token, 7);
+
+        $validated = $request->validate([
+            'current_password' => 'required',
+            'new_password' => 'required|min:8|max:16',
+            'confirm_password' => 'required|same:new_password',
+        ]);
+
+        $user = Person::where('token', hash('sha256', $token))->first();
+        if(!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        try {
+
+            // check if current password is same password in database
+            if(!Hash::check($validated['current_password'], $user->password)) {
+                return response()->json(['errors' => ['current_password' => ['current password not correct']]], 400);
+            }
+
+            // check if new password is same of old password
+            if(Hash::check($validated['new_password'], $user->password)) {
+                return response()->json(['errors' => ['new_password' => ['you can\'t set same old password']]], 400);
+            }
+
+            $user->update([
+                'password' => Hash::make($validated['new_password'])
+            ]);
+            return response()->json(['message' => 'password updated succesfully'], 200);
         } catch (\Throwable $e) {
             return response()->json(['message' => $e->getMessage()], 422);
         }

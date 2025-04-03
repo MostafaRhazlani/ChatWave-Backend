@@ -10,6 +10,7 @@ Route::post('/login', [AuthController::class, 'login']);
 
 Route::put('/user/update', [PersonController::class, 'update'])->middleware('auth');
 Route::post('/user/update-image', [PersonController::class, 'updateImageProfile'])->middleware('auth');
+Route::patch('/user/change-password', [PersonController::class, 'changePassword'])->middleware('auth');
 
 Route::get('/user/posts', [PersonController::class, 'index'])->middleware('auth');
 Route::get('/post/{id}', [PostController::class, 'show'])->middleware('auth');
