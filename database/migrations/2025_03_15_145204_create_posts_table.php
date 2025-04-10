@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->text('description');
-            $table->string('image', 255);
+            $table->text('content');
+            $table->string('media', 255);
+            $table->enum('type', ['image', 'video']);
             $table->unsignedBigInteger('person_id');
             $table->timestamps();
             $table->foreign('person_id')->references('id')->on('persons')->onDelete('cascade');
