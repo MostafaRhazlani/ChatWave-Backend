@@ -60,7 +60,6 @@ class PersonController extends Controller
      */
     public function update(Request $request)
     {
-        dd($request->all());
         $token = $request->header('Authorization');
         $token = substr($token, 7);
 
@@ -112,7 +111,6 @@ class PersonController extends Controller
     }
 
     public function changePassword(Request $request) {
-        dd($request->all());
         $token = $request->header('Authorization');
         $token = substr($token, 7);
 
