@@ -18,3 +18,5 @@ Route::get('/user/posts', [PersonController::class, 'index'])->middleware('auth'
 Route::get('/post/{id}', [PostController::class, 'show'])->middleware('auth');
 
 Route::post('/post/create', [PostController::class, 'create'])->middleware('auth');
+
+Route::get('/tags', [TagController::class, 'index'])->middleware('auth');

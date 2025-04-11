@@ -27,7 +27,8 @@ class PostController extends Controller
         $validated = $request->validate([
             'content' => 'required',
             'media' => 'required|file',
-            'type' => 'required|in:image,video'
+            'type' => 'required|in:image,video',
+            'tags' => 'required'
         ]);
 
         try {
@@ -71,7 +72,12 @@ class PostController extends Controller
 
             $post->save();
 
+            if(count(json_decode($request->tags)) > 0) {
+                $latestPost = Post::find($post->id);
+                $latestPost->tags()->syncWithoutDetaching(json_decode($request->tags));
+            }
             return response()->json(['message' => 'Post created successfully', 'post' => $post], 200);
+
         } catch (\Throwable $e) {
             return response()->json(['message' => $e->getMessage()], 422);
         }
