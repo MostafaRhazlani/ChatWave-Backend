@@ -17,6 +17,7 @@ Route::patch('/user/change-password', [PersonController::class, 'changePassword'
 Route::get('/user/posts', [PersonController::class, 'index'])->middleware('auth');
 Route::get('/post/{id}', [PostController::class, 'show'])->middleware('auth');
 
+Route::get('/posts', [PostController::class, 'index'])->middleware('auth');
 Route::post('/post/create', [PostController::class, 'create'])->middleware('auth');
 
 Route::get('/tags', [TagController::class, 'index'])->middleware('auth');

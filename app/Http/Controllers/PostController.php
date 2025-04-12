@@ -11,9 +11,23 @@ class PostController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
 
+        $user = $request->user();
+
+        $followerIds = $user->followers()->pluck('person_id')->toArray();
+        $followingIds = $user->following()->pluck('followed_person_id')->toArray();
+
+        $personIds = array_unique(array_merge($followerIds, $followingIds));
+        $posts = Post::whereIn('person_id', $personIds)
+                ->orWhere('person_id', $user->id)
+                ->with(['person', 'tags'])
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+
+        return response()->json(['posts' => $posts]);
     }
 
     /**
@@ -57,7 +71,7 @@ class PostController extends Controller
 
                 $image = $request->file('media');
                 $uniqueImage = uniqid() . '.' . $image->getClientOriginalExtension();
-                $image->storeAs('posts', $uniqueImage, 'public');
+                $image->storeAs('posts/images', $uniqueImage, 'public');
                 $post->media = $uniqueImage;
             } elseif($validated['type'] === 'video') {
                 if (!in_array($fileType, ['mp4'])) {
