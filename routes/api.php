@@ -15,9 +15,11 @@ Route::post('/user/update-image', [PersonController::class, 'updateImageProfile'
 Route::patch('/user/change-password', [PersonController::class, 'changePassword'])->middleware('auth');
 
 Route::get('/user/posts', [PersonController::class, 'index'])->middleware('auth');
-Route::get('/post/{id}', [PostController::class, 'show'])->middleware('auth');
+Route::get('/post/{id}/show', [PostController::class, 'show'])->middleware('auth');
 
 Route::get('/posts', [PostController::class, 'index'])->middleware('auth');
 Route::post('/post/create', [PostController::class, 'create'])->middleware('auth');
+Route::get('/post/{id}/edit', [PostController::class, 'edit'])->middleware('auth');
+Route::post('/post/{id}/update', [PostController::class, 'update'])->middleware('auth');
 
 Route::get('/tags', [TagController::class, 'index'])->middleware('auth');
