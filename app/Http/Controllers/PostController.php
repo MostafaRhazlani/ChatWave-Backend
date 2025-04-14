@@ -110,8 +110,7 @@ class PostController extends Controller
      */
     public function show($id)
     {
-        $post = Post::where('id', $id)->with('person')->first();
-
+        $post = Post::where('id', $id)->with(['person', 'tags'])->first();
         return response()->json(['post' => $post], 200);
     }
 
