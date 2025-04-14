@@ -197,8 +197,16 @@ class PostController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Post $post)
+    public function destroy($id)
     {
-        //
+        try {
+            $post = Post::find($id);
+            $post->tags()->detach();
+            $post->delete();
+
+            return response()->json(['message' => 'Post deleted successfully'], 200);
+        } catch (\Throwable $e) {
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
     }
 }

@@ -21,5 +21,6 @@ Route::get('/posts', [PostController::class, 'index'])->middleware('auth');
 Route::post('/post/create', [PostController::class, 'create'])->middleware('auth');
 Route::get('/post/{id}/edit', [PostController::class, 'edit'])->middleware('auth');
 Route::post('/post/{id}/update', [PostController::class, 'update'])->middleware('auth');
+Route::delete('/post/{id}/delete', [PostController::class, 'destroy'])->middleware('auth');
 
 Route::get('/tags', [TagController::class, 'index'])->middleware('auth');
