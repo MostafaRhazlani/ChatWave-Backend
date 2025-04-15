@@ -22,10 +22,10 @@ class PostController extends Controller
         $personIds = array_unique(array_merge($followerIds, $followingIds));
         $posts = Post::whereIn('person_id', $personIds)
                 ->orWhere('person_id', $user->id)
-                ->with(['person', 'tags'])
+                ->with(['person', 'tags', 'latestThreeComments'])
+                ->withCount('comments')
                 ->orderBy('created_at', 'desc')
                 ->get();
-
 
         return response()->json(['posts' => $posts], 200);
     }
@@ -110,7 +110,7 @@ class PostController extends Controller
      */
     public function show($id)
     {
-        $post = Post::where('id', $id)->with(['person', 'tags'])->first();
+        $post = Post::where('id', $id)->with(['person', 'tags', 'comments.person'])->first();
         return response()->json(['post' => $post], 200);
     }
 
