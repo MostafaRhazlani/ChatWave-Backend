@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PersonController;
 use App\Http\Controllers\PostController;
@@ -33,3 +34,9 @@ Route::delete('/comment/{id}/delete', [CommentController::class, 'destroy'])->mi
 
 // tags api
 Route::get('/tags', [TagController::class, 'index'])->middleware('auth');
+
+// likes api
+Route::post('/like/add', [LikeController::class, 'create'])->middleware('auth');
+Route::post('/like/show', [LikeController::class, 'show'])->middleware('auth');
+Route::delete('/like/delete', [LikeController::class, 'destroy'])->middleware('auth');
+

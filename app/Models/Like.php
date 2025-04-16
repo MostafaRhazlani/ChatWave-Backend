@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Like extends Model
 {
+    protected $fillable = ['person_id', 'post_id'];
     // relation with table posts
     public function post() {
         return $this->belongsTo(Post::class);

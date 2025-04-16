@@ -23,10 +23,14 @@ class PostController extends Controller
         $posts = Post::whereIn('person_id', $personIds)
                 ->orWhere('person_id', $user->id)
                 ->with(['person', 'tags', 'latestThreeComments'])
-                ->withCount('comments')
+                ->withCount('comments', 'likes')
                 ->orderBy('created_at', 'desc')
                 ->get();
 
+
+        $posts->each(function ($post) use ($user) {
+            $post->is_liked = $post->likes()->where('person_id', $user->id)->exists();
+        });
         return response()->json(['posts' => $posts], 200);
     }
 
@@ -108,9 +112,11 @@ class PostController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
-        $post = Post::where('id', $id)->with(['person', 'tags', 'comments.person'])->first();
+        $user = $request->user();
+        $post = Post::where('id', $id)->with(['person', 'tags', 'comments.person'])->withCount('comments', 'likes')->first();
+        $post->is_liked = $post->likes()->where('person_id', $user->id)->exists();
         return response()->json(['post' => $post], 200);
     }
 
