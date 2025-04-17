@@ -40,4 +40,14 @@ class Person extends Model
     public function receivedMessage() {
         return $this->belongsTo(Message::class, 'receiver_id');
     }
+
+    // relation of following with table persons
+    public function following() {
+        return $this->belongsToMany(Person::class, 'follows', 'person_id', 'followed_person_id');
+    }
+
+    // relation of followers with table persons
+    public function followers() {
+        return $this->belongsToMany(Person::class, 'follows', 'followed_person_id', 'person_id');
+    }
 }

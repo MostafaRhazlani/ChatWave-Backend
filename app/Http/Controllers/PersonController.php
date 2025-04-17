@@ -12,15 +12,10 @@ class PersonController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
     {
-        $token = $request->header('Authorization');
-        $token = substr($token, 7);
-
-        $user = Person::where('token', hash('sha256', $token))->first();
-
-        $userPosts = Post::where('person_id', $user->id)->with('person')->get();
-        return response()->json(['userPosts' => $userPosts], 200);
+        $randomUsers = Person::inRandomOrder()->limit(3)->get();
+        return response()->json(['randomUsers' => $randomUsers]);
     }
 
     /**
@@ -42,9 +37,14 @@ class PersonController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Person $person)
+    public function show($id)
     {
-        //
+        try {
+            $userInfo = Person::with('posts')->withCount(['followers', 'following'])->find($id);
+            return response()->json(['userInfo' => $userInfo], 200);
+        } catch (\Throwable $e) {
+            return response()->json(['message' => $e->getMessage()]);
+        }
     }
 
     /**
@@ -54,6 +54,7 @@ class PersonController extends Controller
     {
         //
     }
+
 
     /**
      * Update the specified resource in storage.
@@ -152,5 +153,52 @@ class PersonController extends Controller
     public function destroy(Person $person)
     {
         //
+    }
+
+    public function followStatus(Request $request, $userId) {
+        $authUser = $request->user();
+
+        try {
+            $isFollowHim = $authUser->following()->where('followed_person_id', $userId)->exists();
+            $isFollowMe = $authUser->followers()->where('person_id', $userId)->exists();
+
+            return response()->json([
+                'isFollowHim' => $isFollowHim,
+                'isFollowMe' => $isFollowMe,
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json(['message' => $e->getMessage()]);
+        }
+    }
+
+    public function toggleFollow(Request $request, $userId) {
+        $authUser = $request->user();
+
+        try {
+
+            $authUser->following()->toggle($userId);
+            $isFollowHim = $authUser->following()->where('followed_person_id', $userId)->exists();
+            return response()->json([
+                'isFollowHim' => $isFollowHim,
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json(['message' => $e->getMessage()]);
+        }
+    }
+
+    public function getAllNotFollowBack(Request $request) {
+        $user = $request->user();
+
+        try {
+            $followers = $user->followers()->pluck('person_id');
+            $following = $user->following()->pluck('followed_person_id');
+
+            $notFollowBack = $followers->diff($following);
+
+            $usersNotFollowBack = Person::whereIn('id', $notFollowBack)->select('id', 'full_name', 'username', 'image')->get();
+            return response()->json(['usersNotFollowBack' => $usersNotFollowBack]);
+        } catch (\Throwable $e) {
+            return response()->json(['message' => $e->getMessage()]);
+        }
     }
 }
