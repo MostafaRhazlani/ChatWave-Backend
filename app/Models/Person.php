@@ -38,7 +38,7 @@ class Person extends Model
 
     // relation of received messages with table messages
     public function receivedMessage() {
-        return $this->belongsTo(Message::class, 'receiver_id');
+        return $this->hasMany(Message::class, 'receiver_id');
     }
 
     // relation of following with table persons

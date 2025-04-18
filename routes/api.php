@@ -22,6 +22,7 @@ Route::get('/users', [PersonController::class, 'index'])->middleware('auth');
 
 // messages api
 Route::get('/contacts', [MessageController::class, 'contacts'])->middleware('auth');
+Route::get('/contact/{friend_id}/conversation', [MessageController::class, 'getConversation'])->middleware('auth');
 
 Route::get('/user/{id}/show', [PersonController::class, 'show'])->middleware('auth');
 Route::get('/user/{userId}/follow-status', [PersonController::class, 'followStatus'])->middleware('auth');

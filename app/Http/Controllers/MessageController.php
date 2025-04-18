@@ -42,4 +42,19 @@ class MessageController extends Controller
             return response()->json(['message' => $e->getMessage()], 400);
         }
     }
+
+    public function getConversation(Request $request, $friend_id) {
+        $userId = $request->user()->id;
+
+        $friend = Person::where('id', $friend_id)->select('id', 'full_name', 'image')->first();
+        $messages = Message::where(function($query) use ($userId, $friend_id) {
+            $query->where('sender_id', $userId)
+                  ->where('receiver_id', $friend_id);
+        })->orWhere(function($query) use ($userId, $friend_id) {
+            $query->where('receiver_id', $userId)
+                  ->where('sender_id', $friend_id);
+        })->with(['sender', 'receiver'])->orderBy('created_at')->get();
+
+        return response()->json(['messages' => $messages, 'friend' => $friend]);
+    }
 }
