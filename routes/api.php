@@ -20,6 +20,9 @@ Route::patch('/user/change-password', [PersonController::class, 'changePassword'
 Route::get('/user/show-profile', [PersonController::class, 'show'])->middleware('auth');
 Route::get('/users', [PersonController::class, 'index'])->middleware('auth');
 
+// messages api
+Route::get('/contacts', [MessageController::class, 'contacts'])->middleware('auth');
+
 Route::get('/user/{id}/show', [PersonController::class, 'show'])->middleware('auth');
 Route::get('/user/{userId}/follow-status', [PersonController::class, 'followStatus'])->middleware('auth');
 Route::post('/user/{userId}/toggle-follow', [PersonController::class, 'toggleFollow'])->middleware('auth');
