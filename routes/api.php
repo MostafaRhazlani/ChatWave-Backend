@@ -4,7 +4,6 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\MessageController;
-use App\Http\Controllers\PageController;
 use App\Http\Controllers\PersonController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\TagController;
@@ -23,6 +22,7 @@ Route::get('/users', [PersonController::class, 'index'])->middleware('auth');
 // messages api
 Route::get('/contacts', [MessageController::class, 'contacts'])->middleware('auth');
 Route::get('/contact/{friend_id}/conversation', [MessageController::class, 'getConversation'])->middleware('auth');
+Route::post('message/send', [MessageController::class, 'sendMessage'])->middleware('auth');
 
 Route::get('/user/{id}/show', [PersonController::class, 'show'])->middleware('auth');
 Route::get('/user/{userId}/follow-status', [PersonController::class, 'followStatus'])->middleware('auth');

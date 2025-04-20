@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Person;
 use App\Models\Message;
 use App\Events\MessageSent;
+use App\Jobs\SendChatMessage;
 use Illuminate\Http\Request;
 
 class MessageController extends Controller
@@ -56,5 +57,26 @@ class MessageController extends Controller
         })->with(['sender', 'receiver'])->orderBy('created_at')->get();
 
         return response()->json(['messages' => $messages, 'friend' => $friend]);
+    }
+
+    public function sendMessage(Request $request) {
+
+        $userId = $request->user()->id;
+        $validated = $request->validate([
+            'sender_id' => 'required',
+            'receiver_id' => 'required',
+            'content' => 'required',
+        ]);
+
+        $message = Message::create([
+            'sender_id' => $userId,
+            'receiver_id' => $request->receiver_id,
+            'content' => $request->content,
+        ]);
+
+        dispatch(new SendChatMessage($message));
+
+        return response()->json(['message' => $message]);
+
     }
 }
