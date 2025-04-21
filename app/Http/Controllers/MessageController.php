@@ -65,18 +65,50 @@ class MessageController extends Controller
         $validated = $request->validate([
             'sender_id' => 'required',
             'receiver_id' => 'required',
-            'content' => 'required',
+            'messageType' => 'nullable|in:image,video,document'
         ]);
 
-        $message = Message::create([
-            'sender_id' => $userId,
-            'receiver_id' => $request->receiver_id,
-            'content' => $request->content,
-        ]);
+        $message = new Message();
+        $message->sender_id = $userId;
+        $message->receiver_id = $request->receiver_id;
+        if($request->content) {
+            $message->content = $request->content;
+        }
+        if ($request->hasFile('media')) {
+            $media = $request->file('media');
+            $fileExtension = pathinfo($media->getClientOriginalName(), PATHINFO_EXTENSION);
+            $fileType = strtolower($fileExtension);
+            if($validated['messageType'] === 'video') {
+                if(in_array($fileType, ['mp4'])) {
+                    $uniqueName = uniqid() . '.' . $media->getClientOriginalExtension();
+                    $media->storeAs('chat/videos', $uniqueName, 'public');
+                    $message->media = $uniqueName;
+                } else {
+                    return response()->json(['error' => 'Invalid video file'], 400);
+                }
+            } else if($validated['messageType'] === 'image') {
+                if(in_array($fileType, ['jpg', 'jpeg', 'png', 'webp'])) {
+                    $uniqueName = uniqid() . '.' . $media->getClientOriginalExtension();
+                    $media->storeAs('chat/images', $uniqueName, 'public');
+                    $message->media = $uniqueName;
+                } else {
+                    return response()->json(['error' => 'Invalid image file'], 400);
+                }
+            } else if($validated['messageType'] === 'document') {
+                if(in_array($fileType, ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt'])) {
+                    $uniqueName = uniqid() . '.' . $media->getClientOriginalExtension();
+                    $media->storeAs('chat/documents', $uniqueName, 'public');
+                    $message->media = $uniqueName;
+                } else {
+                    return response()->json(['error' => 'Invalid document file'], 400);
+                }
+            }
+            $message->messageType = $validated['messageType'];
+        }
+        $message->save();
 
         dispatch(new SendChatMessage($message));
 
         return response()->json(['message' => $message]);
-
     }
 }
