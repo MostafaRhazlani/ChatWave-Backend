@@ -21,11 +21,6 @@ class Person extends Model
         return $this->hasMany(Comment::class);
     }
 
-    // relation with table pages
-    public function pages() {
-        return $this->hasMany(Page::class);
-    }
-
     // relation with table likes
     public function likes() {
         return $this->hasMany(Like::class);

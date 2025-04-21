@@ -32,9 +32,4 @@ class Post extends Model
     {
         return $this->hasMany(Comment::class)->latest()->take(3)->with('person');
     }
-
-     // relation with table pages
-    public function page() {
-        return $this->belongsTo(Page::class);
-    }
 }
