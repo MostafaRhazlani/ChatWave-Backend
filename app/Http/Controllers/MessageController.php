@@ -111,4 +111,24 @@ class MessageController extends Controller
 
         return response()->json(['message' => $message]);
     }
+
+    public function edit($id) {
+
+        $message = Message::find($id);
+        return response()->json(['message' => $message]);
+    }
+
+    public function update(Request $request, $id) {
+
+        $validated = $request->validate([
+            'content' => 'required',
+        ]);
+
+        $message = Message::find($id);
+        $message->update([
+            'content' => $validated['content'],
+        ]);
+
+        return response()->json(['message' => $message]);
+    }
 }

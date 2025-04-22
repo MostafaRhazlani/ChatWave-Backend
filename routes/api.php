@@ -23,6 +23,8 @@ Route::get('/users', [PersonController::class, 'index'])->middleware('auth');
 Route::get('/contacts', [MessageController::class, 'contacts'])->middleware('auth');
 Route::get('/contact/{friend_id}/conversation', [MessageController::class, 'getConversation'])->middleware('auth');
 Route::post('message/send', [MessageController::class, 'sendMessage'])->middleware('auth');
+Route::get('/message/{id}/edit', [MessageController::class, 'edit'])->middleware('auth');
+Route::patch('/message/{id}/update', [MessageController::class, 'update'])->middleware('auth');
 
 Route::get('/user/{id}/show', [PersonController::class, 'show'])->middleware('auth');
 Route::get('/user/{userId}/follow-status', [PersonController::class, 'followStatus'])->middleware('auth');
@@ -50,4 +52,3 @@ Route::get('/tags', [TagController::class, 'index'])->middleware('auth');
 Route::post('/like/add', [LikeController::class, 'create'])->middleware('auth');
 Route::post('/like/show', [LikeController::class, 'show'])->middleware('auth');
 Route::delete('/like/delete', [LikeController::class, 'destroy'])->middleware('auth');
-
