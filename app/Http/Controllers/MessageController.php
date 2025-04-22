@@ -131,4 +131,9 @@ class MessageController extends Controller
 
         return response()->json(['message' => $message]);
     }
+
+    public function destroy($id) {
+        Message::destroy($id);
+        return response()->json(['message' => 'message deleted successfully']);
+    }
 }

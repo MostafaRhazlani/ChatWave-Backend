@@ -25,6 +25,8 @@ Route::get('/contact/{friend_id}/conversation', [MessageController::class, 'getC
 Route::post('message/send', [MessageController::class, 'sendMessage'])->middleware('auth');
 Route::get('/message/{id}/edit', [MessageController::class, 'edit'])->middleware('auth');
 Route::patch('/message/{id}/update', [MessageController::class, 'update'])->middleware('auth');
+Route::delete('/message/{id}/delete', [MessageController::class, 'destroy'])->middleware('auth');
+
 
 Route::get('/user/{id}/show', [PersonController::class, 'show'])->middleware('auth');
 Route::get('/user/{userId}/follow-status', [PersonController::class, 'followStatus'])->middleware('auth');
