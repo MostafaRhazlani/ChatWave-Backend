@@ -18,20 +18,10 @@ class PersonController extends Controller
         return response()->json(['randomUsers' => $randomUsers]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+    public function checkUserAuth(Request $request) {
+        $user = $request->user();
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
+        return response()->json(['user' => $user]);
     }
 
     /**
@@ -46,15 +36,6 @@ class PersonController extends Controller
             return response()->json(['message' => $e->getMessage()]);
         }
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Person $person)
-    {
-        //
-    }
-
 
     /**
      * Update the specified resource in storage.

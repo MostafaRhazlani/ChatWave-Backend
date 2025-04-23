@@ -1,56 +1,61 @@
 <?php
 
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\CommentController;
-use App\Http\Controllers\LikeController;
-use App\Http\Controllers\MessageController;
-use App\Http\Controllers\PersonController;
-use App\Http\Controllers\PostController;
-use App\Http\Controllers\TagController;
+use GuzzleHttp\Psr7\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TagController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\LikeController;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\PersonController;
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\MessageController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
-// users api
-Route::put('/user/update', [PersonController::class, 'update'])->middleware('auth');
-Route::post('/user/update-image', [PersonController::class, 'updateImageProfile'])->middleware('auth');
-Route::patch('/user/change-password', [PersonController::class, 'changePassword'])->middleware('auth');
-Route::get('/user/show-profile', [PersonController::class, 'show'])->middleware('auth');
-Route::get('/users', [PersonController::class, 'index'])->middleware('auth');
+Route::middleware(['auth', 'role:user'])->group(function() {
 
-// messages api
-Route::get('/contacts', [MessageController::class, 'contacts'])->middleware('auth');
-Route::get('/contact/{friend_id}/conversation', [MessageController::class, 'getConversation'])->middleware('auth');
-Route::post('message/send', [MessageController::class, 'sendMessage'])->middleware('auth');
-Route::get('/message/{id}/edit', [MessageController::class, 'edit'])->middleware('auth');
-Route::patch('/message/{id}/update', [MessageController::class, 'update'])->middleware('auth');
-Route::delete('/message/{id}/delete', [MessageController::class, 'destroy'])->middleware('auth');
+    // users api
+    Route::put('/user/update', [PersonController::class, 'update']);
+    Route::post('/user/update-image', [PersonController::class, 'updateImageProfile']);
+    Route::patch('/user/change-password', [PersonController::class, 'changePassword']);
+    Route::get('/users', [PersonController::class, 'index']);
+    Route::get('/user/{id}/show', [PersonController::class, 'show']);
+    Route::get('/user/{userId}/follow-status', [PersonController::class, 'followStatus']);
+    Route::post('/user/{userId}/toggle-follow', [PersonController::class, 'toggleFollow']);
+    Route::get('/user/users-not-follow-back', [PersonController::class, 'getAllNotFollowBack']);
+
+    // messages api
+    Route::get('/contacts', [MessageController::class, 'contacts']);
+    Route::get('/contact/{friend_id}/conversation', [MessageController::class, 'getConversation']);
+    Route::post('message/send', [MessageController::class, 'sendMessage']);
+    Route::get('/message/{id}/edit', [MessageController::class, 'edit']);
+    Route::patch('/message/{id}/update', [MessageController::class, 'update']);
+    Route::delete('/message/{id}/delete', [MessageController::class, 'destroy']);
 
 
-Route::get('/user/{id}/show', [PersonController::class, 'show'])->middleware('auth');
-Route::get('/user/{userId}/follow-status', [PersonController::class, 'followStatus'])->middleware('auth');
-Route::post('/user/{userId}/toggle-follow', [PersonController::class, 'toggleFollow'])->middleware('auth');
-Route::get('/user/users-not-follow-back', [PersonController::class, 'getAllNotFollowBack'])->middleware('auth');
 
-// posts api
-Route::get('/posts', [PostController::class, 'index'])->middleware('auth');
-Route::post('/post/create', [PostController::class, 'create'])->middleware('auth');
-Route::get('/post/{id}/show', [PostController::class, 'show'])->middleware('auth');
-Route::get('/post/{id}/edit', [PostController::class, 'edit'])->middleware('auth');
-Route::post('/post/{id}/update', [PostController::class, 'update'])->middleware('auth');
-Route::delete('/post/{id}/delete', [PostController::class, 'destroy'])->middleware('auth');
+    // posts api
+    Route::get('/posts', [PostController::class, 'index']);
+    Route::post('/post/create', [PostController::class, 'create']);
+    Route::get('/post/{id}/show', [PostController::class, 'show']);
+    Route::get('/post/{id}/edit', [PostController::class, 'edit']);
+    Route::post('/post/{id}/update', [PostController::class, 'update']);
+    Route::delete('/post/{id}/delete', [PostController::class, 'destroy']);
 
-// comments api
-Route::post('/comment/create', [CommentController::class, 'create'])->middleware('auth');
-Route::get('/comment/{id}/edit', [CommentController::class, 'edit'])->middleware('auth');
-Route::patch('/comment/{id}/update', [CommentController::class, 'update'])->middleware('auth');
-Route::delete('/comment/{id}/delete', [CommentController::class, 'destroy'])->middleware('auth');
+    // comments api
+    Route::post('/comment/create', [CommentController::class, 'create']);
+    Route::get('/comment/{id}/edit', [CommentController::class, 'edit']);
+    Route::patch('/comment/{id}/update', [CommentController::class, 'update']);
+    Route::delete('/comment/{id}/delete', [CommentController::class, 'destroy']);
 
-// tags api
-Route::get('/tags', [TagController::class, 'index'])->middleware('auth');
+    // tags api
+    Route::get('/tags', [TagController::class, 'index']);
 
-// likes api
-Route::post('/like/add', [LikeController::class, 'create'])->middleware('auth');
-Route::post('/like/show', [LikeController::class, 'show'])->middleware('auth');
-Route::delete('/like/delete', [LikeController::class, 'destroy'])->middleware('auth');
+    // likes api
+    Route::post('/like/add', [LikeController::class, 'create']);
+    Route::post('/like/show', [LikeController::class, 'show']);
+    Route::delete('/like/delete', [LikeController::class, 'destroy']);
+});
+
+Route::get('/check-user-auth', [PersonController::class, 'checkUserAuth'])->middleware(['auth']);
