@@ -24,6 +24,7 @@ Route::middleware(['auth', 'role:user'])->group(function() {
     Route::get('/user/{userId}/follow-status', [PersonController::class, 'followStatus']);
     Route::post('/user/{userId}/toggle-follow', [PersonController::class, 'toggleFollow']);
     Route::get('/user/users-not-follow-back', [PersonController::class, 'getAllNotFollowBack']);
+    Route::get('/search-user', [PersonController::class, 'searchUser']);
 
     // messages api
     Route::get('/contacts', [MessageController::class, 'contacts']);

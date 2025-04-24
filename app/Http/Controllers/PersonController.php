@@ -182,4 +182,10 @@ class PersonController extends Controller
             return response()->json(['message' => $e->getMessage()]);
         }
     }
+
+    public function searchUser(Request $request) {
+        $query = $request->query('query');
+        $users = Person::where('full_name', 'ILIKE', "%$query%")->orWhere('username', 'ILIKE', "%$query%")->get();
+        return response()->json(['users' => $users]);
+    }
 }
