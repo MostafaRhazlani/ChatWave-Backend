@@ -45,4 +45,12 @@ class Person extends Model
     public function followers() {
         return $this->belongsToMany(Person::class, 'follows', 'followed_person_id', 'person_id');
     }
+
+    public function usersBlocked() {
+        return $this->belongsToMany(Person::class, 'user_block', 'blocker_id', 'blocked_id');
+    }
+
+    public function blockedByUsers() {
+        return $this->belongsToMany(Person::class, 'user_block', 'blocked_id', 'blocker_id');
+    }
 }

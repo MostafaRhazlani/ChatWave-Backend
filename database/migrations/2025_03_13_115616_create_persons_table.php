@@ -20,6 +20,7 @@ return new class extends Migration
             $table->enum('gender', ['male', 'female']);
             $table->date('date_birth');
             $table->string('password');
+            $table->boolean('statusBlock')->default(0);
             $table->enum('role', ['user', 'admin'])->default('user');
             $table->string('token')->unique()->nullable();
             $table->timestamps();

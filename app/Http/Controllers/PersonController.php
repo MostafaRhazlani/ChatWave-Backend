@@ -12,9 +12,15 @@ class PersonController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $randomUsers = Person::inRandomOrder()->limit(3)->get();
+        $authUser = $request->user();
+        $blockedUser = $authUser->usersBlocked()->pluck('blocked_id')->toArray();
+        $blockedBy = $authUser->blockedByUsers()->pluck('blocker_id')->toArray();
+
+        $usersBlockedIds = array_unique(array_merge($blockedUser, $blockedBy));
+
+        $randomUsers = Person::whereNotIn('id', $usersBlockedIds)->inRandomOrder()->limit(3)->get();
         return response()->json(['randomUsers' => $randomUsers]);
     }
 
@@ -136,6 +142,33 @@ class PersonController extends Controller
         //
     }
 
+    public function toggleUserBlock(Request $request, $id) {
+        $authUser = $request->user();
+
+        try {
+            $authUser->usersBlocked()->toggle($id);
+            $isBlockedHim = $authUser->usersBlocked()->where('blocked_id', $id)->exists();
+            if($isBlockedHim === true) {
+                $authUser->following()->detach($id);
+            }
+            return response()->json(['isBlockedHim' => $isBlockedHim], 200);
+        } catch (\Throwable $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
+    }
+
+    public function blockStatus(Request $request, $userId) {
+        $authUser = $request->user();
+
+        try {
+            $isBlockedHim = $authUser->usersBlocked()->where('blocked_id', $userId)->exists();
+
+            return response()->json(['isBlockedHim' => $isBlockedHim], 200);
+        } catch (\Throwable $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
+    }
+
     public function followStatus(Request $request, $userId) {
         $authUser = $request->user();
 
@@ -184,8 +217,18 @@ class PersonController extends Controller
     }
 
     public function searchUser(Request $request) {
+        $authUser = $request->user();
         $query = $request->query('query');
-        $users = Person::where('full_name', 'ILIKE', "%$query%")->orWhere('username', 'ILIKE', "%$query%")->get();
+
+        $blockedUser = $authUser->usersBlocked()->pluck('blocked_id')->toArray();
+        $blockedBy = $authUser->blockedByUsers()->pluck('blocker_id')->toArray();
+
+        $usersBlockedIds = array_unique(array_merge($blockedUser, $blockedBy));
+        $users = Person::whereNotIn('id', $usersBlockedIds)->where(function ($q) use ($query) {
+            $q->where('full_name', 'ILIKE', "%$query%")
+              ->orWhere('username', 'ILIKE', "%$query%");
+        })->get();
+
         return response()->json(['users' => $users]);
     }
 }

@@ -25,6 +25,8 @@ Route::middleware(['auth', 'role:user'])->group(function() {
     Route::post('/user/{userId}/toggle-follow', [PersonController::class, 'toggleFollow']);
     Route::get('/user/users-not-follow-back', [PersonController::class, 'getAllNotFollowBack']);
     Route::get('/search-user', [PersonController::class, 'searchUser']);
+    Route::post('/user/{id}/block', [PersonController::class, 'toggleUserBlock']);
+    Route::get('/user/{id}/block-status', [PersonController::class, 'blockStatus']);
 
     // messages api
     Route::get('/contacts', [MessageController::class, 'contacts']);
@@ -45,7 +47,7 @@ Route::middleware(['auth', 'role:user'])->group(function() {
     Route::delete('/post/{id}/delete', [PostController::class, 'destroy']);
 
     // comments api
-    Route::post('/comment/create', [CommentController::class, 'create']);
+    Route::post('/comment/create', [CommentController::class, 'store']);
     Route::get('/comment/{id}/edit', [CommentController::class, 'edit']);
     Route::patch('/comment/{id}/update', [CommentController::class, 'update']);
     Route::delete('/comment/{id}/delete', [CommentController::class, 'destroy']);
