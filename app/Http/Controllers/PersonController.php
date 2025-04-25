@@ -24,6 +24,13 @@ class PersonController extends Controller
         return response()->json(['randomUsers' => $randomUsers]);
     }
 
+    public function listUsersBlocked(Request $request) {
+        $authUser = $request->user();
+        $usersBlocked = $authUser->usersBlocked()->get();
+
+        return response()->json(['usersBlocked' => $usersBlocked], 200);
+    }
+
     public function checkUserAuth(Request $request) {
         $user = $request->user();
 

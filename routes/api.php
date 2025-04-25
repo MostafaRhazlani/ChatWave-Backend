@@ -27,6 +27,7 @@ Route::middleware(['auth', 'role:user'])->group(function() {
     Route::get('/search-user', [PersonController::class, 'searchUser']);
     Route::post('/user/{id}/block', [PersonController::class, 'toggleUserBlock']);
     Route::get('/user/{id}/block-status', [PersonController::class, 'blockStatus']);
+    Route::get('/users/blocked', [PersonController::class, 'listUsersBlocked']);
 
     // messages api
     Route::get('/contacts', [MessageController::class, 'contacts']);
