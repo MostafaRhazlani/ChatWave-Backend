@@ -64,6 +64,8 @@ Route::middleware(['auth', 'role:user'])->group(function() {
 
     // notifications api
     Route::get('/user/notifications', [NotificationController::class, 'index']);
+    Route::delete('notifications/clear', [NotificationController::class, 'destroy']);
+    Route::patch('notifications/mark', [NotificationController::class, 'update']);
 });
 
 Route::get('/check-user-auth', [PersonController::class, 'checkUserAuth'])->middleware(['auth']);

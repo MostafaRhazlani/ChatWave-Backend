@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\BroadcastPostCreatedNotification;
+use App\Models\Notification;
 use App\Models\Post;
 use App\Models\Person;
 use Illuminate\Http\Request;
@@ -39,8 +41,7 @@ class PostController extends Controller
      */
     public function create(Request $request)
     {
-        $token = $request->header('Authorization');
-        $token = substr($token, 7);
+        $authUser = $request->user();
 
         $validated = $request->validate([
             'content' => 'required',
@@ -50,7 +51,6 @@ class PostController extends Controller
         ]);
 
         try {
-            $user = Person::where('token', hash('sha256', $token))->first();
 
             // Check if a file is uploaded
             if (!$request->hasFile('media')) {
@@ -63,7 +63,7 @@ class PostController extends Controller
 
             $post = new Post();
             $post->content = $validated['content'];
-            $post->person_id = $user->id;
+            $post->person_id = $authUser->id;
             $post->type = $validated['type'];
 
 
@@ -93,6 +93,25 @@ class PostController extends Controller
             if(count(json_decode($request->tags)) > 0) {
                 $latestPost = Post::find($post->id);
                 $latestPost->tags()->syncWithoutDetaching(json_decode($request->tags));
+            }
+
+            if($authUser->id === $latestPost->person_id) {
+                $followerIds = $authUser->followers()->pluck('person_id')->toArray();
+                $followingIds = $authUser->following()->pluck('followed_person_id')->toArray();
+
+                $friends = array_unique(array_merge($followerIds, $followingIds));
+
+                foreach($friends as $friend_id) {
+                    $notification = Notification::create([
+                        'receiver_id' => $friend_id,
+                        'sender_id' => $authUser->id,
+                        'type' => 'post',
+                        'content' => "You friend {$authUser->full_name} added a new post",
+                    ]);
+
+                    $notification->load('sender:id,full_name,image');
+                    dispatch(new BroadcastPostCreatedNotification($notification, $friend_id));
+                }
             }
             return response()->json(['message' => 'Post created successfully', 'post' => $post], 200);
 
