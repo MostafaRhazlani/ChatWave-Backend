@@ -30,6 +30,6 @@ class BroadcastPostCreatedNotification implements ShouldQueue
      */
     public function handle(): void
     {
-        broadcast(new PostCreated($this->notification, $this->receiver));
+        broadcast(new PostCreated($this->notification, $this->receiver))->toOthers();
     }
 }

@@ -32,6 +32,6 @@ class BroadcastCommentNotification implements ShouldQueue
      */
     public function handle(): void
     {
-        broadcast(new CommentAdded($this->notification, $this->postAuthorId));
+        broadcast(new CommentAdded($this->notification, $this->postAuthorId))->toOthers();
     }
 }
