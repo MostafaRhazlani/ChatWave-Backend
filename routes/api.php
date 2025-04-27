@@ -37,6 +37,7 @@ Route::middleware(['auth', 'role:user'])->group(function() {
     Route::get('/message/{id}/edit', [MessageController::class, 'edit']);
     Route::patch('/message/{id}/update', [MessageController::class, 'update']);
     Route::delete('/message/{id}/delete', [MessageController::class, 'destroy']);
+    Route::get('/messages/status', [MessageController::class, 'getStatusMessages']);
 
 
 

@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Person;
 use App\Models\Message;
-use App\Events\MessageSent;
 use App\Jobs\SendChatMessage;
 use Illuminate\Http\Request;
 
@@ -59,9 +58,21 @@ class MessageController extends Controller
         return response()->json(['messages' => $messages, 'friend' => $friend]);
     }
 
+    public function getStatusMessages(Request $request) {
+
+        try {
+            $authUser = $request->user();
+            $statusMessages = $authUser->receivedMessage()->get();
+            return response()->json(['statusMessages' => $statusMessages], 200);
+        } catch (\Throwable $e) {
+            return response()->json(['message' => $e->getMessage()]);
+        }
+
+    }
+
     public function sendMessage(Request $request) {
 
-        $userId = $request->user()->id;
+        $authUser = $request->user();
         $validated = $request->validate([
             'sender_id' => 'required',
             'receiver_id' => 'required',
@@ -69,8 +80,9 @@ class MessageController extends Controller
         ]);
 
         $message = new Message();
-        $message->sender_id = $userId;
+        $message->sender_id = $authUser->id;
         $message->receiver_id = $request->receiver_id;
+        // $message->is_read = false;
         if($request->content) {
             $message->content = $request->content;
         }

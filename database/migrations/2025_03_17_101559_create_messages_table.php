@@ -18,6 +18,7 @@ return new class extends Migration
             $table->text('content')->nullable();
             $table->enum('messageType', ['image', 'document', 'video'])->nullable();
             $table->text('media')->nullable();
+            $table->boolean('is_read')->default(false);
             $table->foreign('sender_id')->references('id')->on('persons')->onDelete('cascade');
             $table->foreign('receiver_id')->references('id')->on('persons')->onDelete('cascade');
             $table->timestamps();

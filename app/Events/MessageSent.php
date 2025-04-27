@@ -48,6 +48,7 @@ class MessageSent implements ShouldBroadcast, ShouldQueue
                 'sender_id' => $this->message->sender_id,
                 'receiver_id' => $this->message->receiver_id,
                 'created_at' => $this->message->created_at,
+                'is_read' => $this->message->is_read
             ],
         ];
     }

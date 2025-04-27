@@ -28,6 +28,6 @@ class SendChatMessage implements ShouldQueue
      */
     public function handle(): void
     {
-        broadcast(new MessageSent($this->message))->toOthers();
+        broadcast(new MessageSent($this->message));
     }
 }
