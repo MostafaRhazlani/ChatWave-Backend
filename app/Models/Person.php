@@ -53,4 +53,9 @@ class Person extends Model
     public function blockedByUsers() {
         return $this->belongsToMany(Person::class, 'user_block', 'blocked_id', 'blocker_id');
     }
+
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class, 'receiver_id', 'id')->orderBy('created_at', 'DESC');
+    }
 }

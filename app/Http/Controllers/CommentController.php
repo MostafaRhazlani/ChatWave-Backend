@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use App\Models\Comment;
+use App\Events\CommentAdded;
+use App\Models\Notification;
 use Illuminate\Http\Request;
+use App\Jobs\BroadcastCommentNotification;
 
 class CommentController extends Controller
 {
@@ -28,6 +31,14 @@ class CommentController extends Controller
      */
     public function create(Request $request)
     {
+
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
         $validated = $request->validate([
             'comment' => 'required',
         ]);
@@ -38,18 +49,30 @@ class CommentController extends Controller
             $comment->person_id = $request->person_id;
             $comment->comment = $validated['comment'];
             $comment->save();
-            return response()->json(['message' => 'comment created successfully','comment' => $comment], 200);
+
+            $comment->load('person');
+            $postAuthorId = $comment->post->person_id;
+
+            if($postAuthorId !== $comment->person_id) {
+                $notification = Notification::create([
+                    'receiver_id' => $postAuthorId,
+                    'sender_id' => $comment->person_id,
+                    'type' => 'comment',
+                    'content' => "{$comment->person->full_name} added a comment to your post",
+                ]);
+
+                $notification->load('sender:id,full_name,image');
+
+                dispatch(new BroadcastCommentNotification($notification, $postAuthorId));
+            }
+
+            return response()->json([
+                'message' => 'comment created successfully',
+                'comment' => $comment,
+            ], 200);
         } catch (\Throwable $e) {
             return response()->json(['message' => $e->getMessage()], 400);
         }
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
     }
 
     /**

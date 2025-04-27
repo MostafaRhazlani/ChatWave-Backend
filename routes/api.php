@@ -9,6 +9,7 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\PersonController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\MessageController;
+use App\Http\Controllers\NotificationController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -60,6 +61,9 @@ Route::middleware(['auth', 'role:user'])->group(function() {
     Route::post('/like/add', [LikeController::class, 'create']);
     Route::post('/like/show', [LikeController::class, 'show']);
     Route::delete('/like/delete', [LikeController::class, 'destroy']);
+
+    // notifications api
+    Route::get('/user/notifications', [NotificationController::class, 'index']);
 });
 
 Route::get('/check-user-auth', [PersonController::class, 'checkUserAuth'])->middleware(['auth']);
