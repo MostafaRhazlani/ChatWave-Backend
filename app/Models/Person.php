@@ -58,4 +58,8 @@ class Person extends Model
     {
         return $this->hasMany(Notification::class, 'receiver_id', 'id')->orderBy('created_at', 'DESC');
     }
+
+    public function savedPosts() {
+        return $this->belongsToMany(Post::class, 'saves', 'person_id', 'post_id');
+    }
 }

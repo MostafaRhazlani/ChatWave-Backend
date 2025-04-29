@@ -10,6 +10,7 @@ use App\Http\Controllers\PersonController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\SaveController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -41,7 +42,8 @@ Route::middleware(['auth', 'role:user'])->group(function() {
     Route::get('/messages/status', [MessageController::class, 'getStatusMessages']);
     Route::patch('messages/mark-as-read', [MessageController::class, 'changeStatusMessage']);
 
-
+    // saves api
+    Route::post('save/{postId}/post', [SaveController::class, 'toggleSavePost']);
 
     // posts api
     Route::get('/posts', [PostController::class, 'index']);

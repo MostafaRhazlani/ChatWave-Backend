@@ -32,4 +32,8 @@ class Post extends Model
     {
         return $this->hasMany(Comment::class)->latest()->take(3)->with('person');
     }
+
+    public function savedByUsers() {
+        return $this->belongsToMany(Person::class, 'saves', 'post_id', 'person_id');
+    }
 }

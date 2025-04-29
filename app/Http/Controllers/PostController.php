@@ -25,13 +25,14 @@ class PostController extends Controller
         $posts = Post::whereIn('person_id', $personIds)
                 ->orWhere('person_id', $user->id)
                 ->with(['person', 'tags', 'latestThreeComments'])
-                ->withCount('comments', 'likes')
+                ->withCount('comments', 'likes', 'savedByUsers')
                 ->orderBy('created_at', 'desc')
                 ->get();
 
 
         $posts->each(function ($post) use ($user) {
             $post->is_liked = $post->likes()->where('person_id', $user->id)->exists();
+            $post->is_saved = $post->savedByUsers()->where('person_id', $user->id)->exists();
         });
         return response()->json(['posts' => $posts], 200);
     }
@@ -134,8 +135,9 @@ class PostController extends Controller
     public function show(Request $request, $id)
     {
         $user = $request->user();
-        $post = Post::where('id', $id)->with(['person', 'tags', 'comments.person'])->withCount('comments', 'likes')->first();
+        $post = Post::where('id', $id)->with(['person', 'tags', 'comments.person'])->withCount('comments', 'likes', 'savedByUsers')->first();
         $post->is_liked = $post->likes()->where('person_id', $user->id)->exists();
+        $post->is_saved = $post->savedByUsers()->where('person_id', $user->id)->exists();
         return response()->json(['post' => $post], 200);
     }
 
