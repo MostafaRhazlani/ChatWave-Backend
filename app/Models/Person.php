@@ -60,6 +60,6 @@ class Person extends Model
     }
 
     public function savedPosts() {
-        return $this->belongsToMany(Post::class, 'saves', 'person_id', 'post_id');
+        return $this->belongsToMany(Post::class, 'saves', 'person_id', 'post_id')->withTimestamps();
     }
 }

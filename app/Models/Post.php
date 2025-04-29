@@ -34,6 +34,6 @@ class Post extends Model
     }
 
     public function savedByUsers() {
-        return $this->belongsToMany(Person::class, 'saves', 'post_id', 'person_id');
+        return $this->belongsToMany(Person::class, 'saves', 'post_id', 'person_id')->withTimestamps();
     }
 }

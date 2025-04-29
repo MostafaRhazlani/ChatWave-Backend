@@ -44,6 +44,7 @@ Route::middleware(['auth', 'role:user'])->group(function() {
 
     // saves api
     Route::post('save/{postId}/post', [SaveController::class, 'toggleSavePost']);
+    Route::get('my-saved/posts', [SaveController::class, 'mySavedPosts']);
 
     // posts api
     Route::get('/posts', [PostController::class, 'index']);
