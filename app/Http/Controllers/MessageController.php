@@ -33,7 +33,8 @@ class MessageController extends Controller
                     'username' => $contact->username,
                     'full_name' => $contact->full_name,
                     'image' => $contact->image,
-                    'lastMessage' => $lastMessage
+                    'lastMessage' => $lastMessage,
+                    'is_logged' => $contact->is_logged
                 ];
             });
 
@@ -46,7 +47,7 @@ class MessageController extends Controller
     public function getConversation(Request $request, $friend_id) {
         $userId = $request->user()->id;
 
-        $friend = Person::where('id', $friend_id)->select('id', 'full_name', 'image')->first();
+        $friend = Person::where('id', $friend_id)->select('id', 'full_name', 'image', 'is_logged')->first();
         $messages = Message::where(function($query) use ($userId, $friend_id) {
             $query->where('sender_id', $userId)
                   ->where('receiver_id', $friend_id);
@@ -68,6 +69,25 @@ class MessageController extends Controller
             return response()->json(['message' => $e->getMessage()]);
         }
 
+    }
+
+    public function changeStatusMessage(Request $request) {
+        $validated = $request->validate([
+            'friend_id' => 'required|integer',
+        ]);
+
+        try {
+            $authUserId = $request->user()->id;
+
+            $markAsRead = Message::where('sender_id', $validated['friend_id'])
+            ->where('receiver_id', $authUserId)
+            ->where('is_read', false)
+            ->update(['is_read' => true]);
+
+            return response()->json(['markAsRead' => $markAsRead], 200);
+        } catch (\Throwable $e) {
+            return response()->json(['message' => $e->getMessage()]);
+        }
     }
 
     public function sendMessage(Request $request) {

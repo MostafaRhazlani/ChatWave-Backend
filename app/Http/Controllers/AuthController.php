@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\BroadcastUserStatusChanged;
 use App\Models\Person;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
@@ -52,8 +54,24 @@ class AuthController extends Controller
 
         $token = Str::random(60);
         $user->token = hash('sha256', $token);
+        $user->is_logged = true;
         $user->save();
 
+        dispatch(new BroadcastUserStatusChanged($user->id, true));
+
         return response()->json(['user' => $user, 'token' => $token], 200);
+    }
+
+    public function logout(Request $request) {
+        $authUser = $request->user();
+
+        $authUser->update([
+            'token' => null,
+            'is_logged' => false,
+        ]);
+
+        dispatch(new BroadcastUserStatusChanged($authUser->id, false));
+
+        return response()->json(['message' => 'user logged successfully'], 200);
     }
 }

@@ -29,6 +29,7 @@ Route::middleware(['auth', 'role:user'])->group(function() {
     Route::post('/user/{id}/block', [PersonController::class, 'toggleUserBlock']);
     Route::get('/user/{id}/block-status', [PersonController::class, 'blockStatus']);
     Route::get('/users/blocked', [PersonController::class, 'listUsersBlocked']);
+    Route::patch('logout', [AuthController::class, 'logout']);
 
     // messages api
     Route::get('/contacts', [MessageController::class, 'contacts']);
@@ -38,6 +39,7 @@ Route::middleware(['auth', 'role:user'])->group(function() {
     Route::patch('/message/{id}/update', [MessageController::class, 'update']);
     Route::delete('/message/{id}/delete', [MessageController::class, 'destroy']);
     Route::get('/messages/status', [MessageController::class, 'getStatusMessages']);
+    Route::patch('messages/mark-as-read', [MessageController::class, 'changeStatusMessage']);
 
 
 
