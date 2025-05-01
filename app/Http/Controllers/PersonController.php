@@ -15,13 +15,18 @@ class PersonController extends Controller
     public function index(Request $request)
     {
         $authUser = $request->user();
-        $blockedUser = $authUser->usersBlocked()->pluck('blocked_id')->toArray();
-        $blockedBy = $authUser->blockedByUsers()->pluck('blocker_id')->toArray();
+        if($authUser->role === 'admin') {
+            $users = Person::where('role', '!=', 'admin')->orderBy('created_at', 'desc')->get();
+            return response()->json(['users' => $users]);
+        } else {
+            $blockedUser = $authUser->usersBlocked()->pluck('blocked_id')->toArray();
+            $blockedBy = $authUser->blockedByUsers()->pluck('blocker_id')->toArray();
 
-        $usersBlockedIds = array_unique(array_merge($blockedUser, $blockedBy));
+            $usersBlockedIds = array_unique(array_merge($blockedUser, $blockedBy));
 
-        $randomUsers = Person::whereNotIn('id', $usersBlockedIds)->inRandomOrder()->limit(3)->get();
-        return response()->json(['randomUsers' => $randomUsers]);
+            $randomUsers = Person::whereNotIn('id', $usersBlockedIds)->inRandomOrder()->limit(3)->get();
+            return response()->json(['randomUsers' => $randomUsers]);
+        }
     }
 
     public function listUsersBlocked(Request $request) {

@@ -17,6 +17,9 @@ Route::post('/login', [AuthController::class, 'login']);
 
 // access to end point for any one authonticate
 Route::middleware(['auth'])->group(function() {
+
+    // users api
+    Route::get('/users', [PersonController::class, 'index']);
     Route::put('/user/update', [PersonController::class, 'update']);
     Route::post('/user/update-image', [PersonController::class, 'updateImageProfile']);
     Route::patch('/user/change-password', [PersonController::class, 'changePassword']);
@@ -40,7 +43,6 @@ Route::middleware(['auth', 'role:admin'])->group(function() {
 Route::middleware(['auth', 'role:user'])->group(function() {
 
     // users api
-    Route::get('/users', [PersonController::class, 'index']);
     Route::get('/user/{userId}/follow-status', [PersonController::class, 'followStatus']);
     Route::post('/user/{userId}/toggle-follow', [PersonController::class, 'toggleFollow']);
     Route::get('/user/{id}/show', [PersonController::class, 'show']);
