@@ -31,6 +31,9 @@ Route::middleware(['auth'])->group(function() {
 // end point for just admin role
 Route::middleware(['auth', 'role:admin'])->group(function() {
 
+    // users api
+    Route::patch('user/{userId}/ban', [PersonController::class, 'toggleUserBan']);
+
     // tags api
     Route::post('tag/store', [TagController::class, 'store']);
     Route::get('tag/{tagId}/edit', [TagController::class, 'edit']);

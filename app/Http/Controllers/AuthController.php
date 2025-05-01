@@ -49,7 +49,11 @@ class AuthController extends Controller
         $user = Person::where('email', $validated['email'])->first();
 
         if(!$user || !Hash::check($validated['password'], $user->password)) {
-            return response()->json(['message' => 'Email or password not correct'],401);
+            return response()->json(['message' => ['incorrectInput' => 'Email or password not correct']],401);
+        }
+
+        if($user->is_banned === true) {
+            return response()->json(['message' => [ 'userBan' => 'Your account is banned, you can\'t login now']],401);
         }
 
         $token = Str::random(60);

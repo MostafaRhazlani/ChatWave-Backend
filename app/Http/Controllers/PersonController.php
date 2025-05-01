@@ -243,4 +243,17 @@ class PersonController extends Controller
 
         return response()->json(['users' => $users]);
     }
+
+    public function toggleUserBan($userId) {
+
+        try {
+            $user = Person::find($userId);
+            $user->is_banned = !$user->is_banned;
+            $user->save();
+
+            return response()->json(['message' => $user->is_banned ? 'user banned successfully' : 'user unbanned successfully'], 200);
+        } catch (\Throwable $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
+    }
 }
