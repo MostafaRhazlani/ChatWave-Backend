@@ -30,6 +30,8 @@ Route::middleware(['auth', 'role:admin'])->group(function() {
 
     // tags api
     Route::post('tag/store', [TagController::class, 'store']);
+    Route::get('tag/{tagId}/edit', [TagController::class, 'edit']);
+    Route::patch('tag/{tagId}/update', [TagController::class, 'update']);
 });
 
 // end point for just user role
