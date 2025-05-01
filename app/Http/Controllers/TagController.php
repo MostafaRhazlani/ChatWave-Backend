@@ -81,4 +81,15 @@ class TagController extends Controller
             return response()->json(['message' => $e->getMessage()], 400);
         }
     }
+
+    public function searchTags(Request $request) {
+
+        try {
+            $query = $request->query('query');
+            $tags = Tag::where('tag_name', 'ILIKE', "%$query%")->get();
+            return response()->json(['tags' => $tags], 200);
+        } catch (\Throwable $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
+    }
 }
