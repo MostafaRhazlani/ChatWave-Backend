@@ -15,16 +15,21 @@ use App\Http\Controllers\SaveController;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
-Route::middleware(['auth', 'role:user'])->group(function() {
-
-    // users api
+// access to end point for any one authonticate
+Route::middleware(['auth'])->group(function() {
     Route::put('/user/update', [PersonController::class, 'update']);
     Route::post('/user/update-image', [PersonController::class, 'updateImageProfile']);
     Route::patch('/user/change-password', [PersonController::class, 'changePassword']);
+});
+
+// end point for just user role
+Route::middleware(['auth', 'role:user'])->group(function() {
+
+    // users api
     Route::get('/users', [PersonController::class, 'index']);
-    Route::get('/user/{id}/show', [PersonController::class, 'show']);
     Route::get('/user/{userId}/follow-status', [PersonController::class, 'followStatus']);
     Route::post('/user/{userId}/toggle-follow', [PersonController::class, 'toggleFollow']);
+    Route::get('/user/{id}/show', [PersonController::class, 'show']);
     Route::get('/user/users-not-follow-back', [PersonController::class, 'getAllNotFollowBack']);
     Route::get('/search-user', [PersonController::class, 'searchUser']);
     Route::post('/user/{id}/block', [PersonController::class, 'toggleUserBlock']);
