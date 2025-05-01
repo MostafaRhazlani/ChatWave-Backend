@@ -32,6 +32,7 @@ Route::middleware(['auth', 'role:admin'])->group(function() {
     Route::post('tag/store', [TagController::class, 'store']);
     Route::get('tag/{tagId}/edit', [TagController::class, 'edit']);
     Route::patch('tag/{tagId}/update', [TagController::class, 'update']);
+    Route::delete('tag/{tagId}/delete', [TagController::class, 'destroy']);
 });
 
 // end point for just user role

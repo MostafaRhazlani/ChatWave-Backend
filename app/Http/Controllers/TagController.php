@@ -17,14 +17,6 @@ class TagController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
@@ -42,14 +34,6 @@ class TagController extends Controller
         } catch (\Throwable $e) {
             return response()->json(['message' => $e->getMessage()], 400);
         }
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Tag $tag)
-    {
-        //
     }
 
     /**
@@ -88,8 +72,13 @@ class TagController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Tag $tag)
+    public function destroy($tagId)
     {
-        //
+        try {
+            Tag::destroy($tagId);
+            return response()->json(['message' => 'tag deleted successfully'], 200);
+        } catch (\Throwable $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
     }
 }
