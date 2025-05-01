@@ -20,6 +20,9 @@ Route::middleware(['auth'])->group(function() {
     Route::put('/user/update', [PersonController::class, 'update']);
     Route::post('/user/update-image', [PersonController::class, 'updateImageProfile']);
     Route::patch('/user/change-password', [PersonController::class, 'changePassword']);
+
+    // tags api
+    Route::get('/tags', [TagController::class, 'index']);
 });
 
 // end point for just user role
@@ -64,9 +67,6 @@ Route::middleware(['auth', 'role:user'])->group(function() {
     Route::get('/comment/{id}/edit', [CommentController::class, 'edit']);
     Route::patch('/comment/{id}/update', [CommentController::class, 'update']);
     Route::delete('/comment/{id}/delete', [CommentController::class, 'destroy']);
-
-    // tags api
-    Route::get('/tags', [TagController::class, 'index']);
 
     // likes api
     Route::post('/like/add', [LikeController::class, 'create']);
