@@ -25,6 +25,13 @@ Route::middleware(['auth'])->group(function() {
     Route::get('/tags', [TagController::class, 'index']);
 });
 
+// end point for just admin role
+Route::middleware(['auth', 'role:admin'])->group(function() {
+
+    // tags api
+    Route::post('tag/store', [TagController::class, 'store']);
+});
+
 // end point for just user role
 Route::middleware(['auth', 'role:user'])->group(function() {
 

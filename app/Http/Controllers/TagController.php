@@ -12,7 +12,7 @@ class TagController extends Controller
      */
     public function index()
     {
-        $tags = Tag::all();
+        $tags = Tag::orderBy('created_at', 'desc')->get();
         return response()->json(['tags' => $tags]);
     }
 
@@ -29,7 +29,19 @@ class TagController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'tag_name' => 'required',
+        ]);
+
+        try {
+            $tag = new Tag();
+            $tag->tag_name = $validated['tag_name'];
+            $tag->save();
+
+            return response()->json(['message' => 'tag created successfully', 'tag' => $tag], 200);
+        } catch (\Throwable $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
     }
 
     /**
