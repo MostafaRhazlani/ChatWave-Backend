@@ -30,6 +30,7 @@ Route::middleware(['auth'])->group(function() {
 
     // posts api
     Route::get('/posts', [PostController::class, 'index']);
+    Route::delete('/post/{id}/delete', [PostController::class, 'destroy']);
 });
 
 // end point for just admin role
@@ -79,7 +80,6 @@ Route::middleware(['auth', 'role:user'])->group(function() {
     Route::get('/post/{id}/show', [PostController::class, 'show']);
     Route::get('/post/{id}/edit', [PostController::class, 'edit']);
     Route::post('/post/{id}/update', [PostController::class, 'update']);
-    Route::delete('/post/{id}/delete', [PostController::class, 'destroy']);
 
     // comments api
     Route::post('/comment/create', [CommentController::class, 'store']);
