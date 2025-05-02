@@ -16,6 +16,7 @@ return new class extends Migration
             $table->text('content');
             $table->string('media', 255);
             $table->enum('type', ['image', 'video']);
+            $table->boolean('is_banned')->default(0);
             $table->unsignedBigInteger('person_id');
             $table->timestamps();
             $table->foreign('person_id')->references('id')->on('persons')->onDelete('cascade');

@@ -18,22 +18,28 @@ class PostController extends Controller
 
         $user = $request->user();
 
-        $followerIds = $user->followers()->pluck('person_id')->toArray();
-        $followingIds = $user->following()->pluck('followed_person_id')->toArray();
-
-        $personIds = array_unique(array_merge($followerIds, $followingIds));
-        $posts = Post::whereIn('person_id', $personIds)
-                ->orWhere('person_id', $user->id)
-                ->with(['person', 'tags', 'latestThreeComments'])
-                ->withCount('comments', 'likes', 'savedByUsers')
+        if($user->role === 'admin') {
+            $posts = Post::with(['person'])
+                ->withCount('comments', 'likes')
                 ->orderBy('created_at', 'desc')
                 ->get();
+        } else {
+            $followerIds = $user->followers()->pluck('person_id')->toArray();
+            $followingIds = $user->following()->pluck('followed_person_id')->toArray();
 
+            $personIds = array_unique(array_merge($followerIds, $followingIds));
+            $posts = Post::whereIn('person_id', $personIds)
+                    ->orWhere('person_id', $user->id)
+                    ->with(['person', 'tags', 'latestThreeComments'])
+                    ->withCount('comments', 'likes', 'savedByUsers')
+                    ->orderBy('created_at', 'desc')
+                    ->get();
 
-        $posts->each(function ($post) use ($user) {
-            $post->is_liked = $post->likes()->where('person_id', $user->id)->exists();
-            $post->is_saved = $post->savedByUsers()->where('person_id', $user->id)->exists();
-        });
+            $posts->each(function ($post) use ($user) {
+                $post->is_liked = $post->likes()->where('person_id', $user->id)->exists();
+                $post->is_saved = $post->savedByUsers()->where('person_id', $user->id)->exists();
+            });
+        }
         return response()->json(['posts' => $posts], 200);
     }
 

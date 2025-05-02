@@ -27,6 +27,9 @@ Route::middleware(['auth'])->group(function() {
 
     // tags api
     Route::get('/tags', [TagController::class, 'index']);
+
+    // posts api
+    Route::get('/posts', [PostController::class, 'index']);
 });
 
 // end point for just admin role
@@ -72,7 +75,6 @@ Route::middleware(['auth', 'role:user'])->group(function() {
     Route::get('my-saved/posts', [SaveController::class, 'mySavedPosts']);
 
     // posts api
-    Route::get('/posts', [PostController::class, 'index']);
     Route::post('/post/create', [PostController::class, 'create']);
     Route::get('/post/{id}/show', [PostController::class, 'show']);
     Route::get('/post/{id}/edit', [PostController::class, 'edit']);
