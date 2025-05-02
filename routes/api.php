@@ -49,6 +49,7 @@ Route::middleware(['auth', 'role:admin'])->group(function() {
 
     // posts api
     Route::get('posts/search', [PostController::class, 'searchPosts']);
+    Route::patch('post/{postId}/status', [PostController::class, 'toggleStatusPost']);
 });
 
 // end point for just user role

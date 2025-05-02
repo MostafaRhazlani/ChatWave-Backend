@@ -28,12 +28,14 @@ class PostController extends Controller
             $followingIds = $user->following()->pluck('followed_person_id')->toArray();
 
             $personIds = array_unique(array_merge($followerIds, $followingIds));
-            $posts = Post::whereIn('person_id', $personIds)
-                    ->orWhere('person_id', $user->id)
-                    ->with(['person', 'tags', 'latestThreeComments'])
-                    ->withCount('comments', 'likes', 'savedByUsers')
-                    ->orderBy('created_at', 'desc')
-                    ->get();
+            $posts = Post::where(function ($query) use ($personIds, $user) {
+                $query->whereIn('person_id', $personIds)
+                       ->orWhere('person_id', $user->id);
+            })->where('is_banned', false)
+              ->with(['person', 'tags', 'latestThreeComments'])
+              ->withCount('comments', 'likes', 'savedByUsers')
+              ->orderBy('created_at', 'desc')
+              ->get();
 
             $posts->each(function ($post) use ($user) {
                 $post->is_liked = $post->likes()->where('person_id', $user->id)->exists();
@@ -250,6 +252,19 @@ class PostController extends Controller
             })->with(['person'])->get();
 
             return response()->json(['posts' => $posts], 200);
+        } catch (\Throwable $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
+    }
+
+    public function toggleStatusPost($postId) {
+
+        try {
+            $post = Post::find($postId);
+            $post->is_banned = !$post->is_banned;
+            $post->save();
+
+            return response()->json(['message' => $post->is_banned ? 'post stopped successfully' : 'user published successfully'], 200);
         } catch (\Throwable $e) {
             return response()->json(['message' => $e->getMessage()], 400);
         }
