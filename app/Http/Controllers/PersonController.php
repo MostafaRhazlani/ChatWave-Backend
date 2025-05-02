@@ -237,14 +237,20 @@ class PersonController extends Controller
         $authUser = $request->user();
         $query = $request->query('query');
 
-        $blockedUser = $authUser->usersBlocked()->pluck('blocked_id')->toArray();
-        $blockedBy = $authUser->blockedByUsers()->pluck('blocker_id')->toArray();
+        if($authUser->role === 'admin') {
+            $users = Person::where('full_name', 'ILIKE', "%$query%")
+                ->orWhere('username', 'ILIKE', "%$query%")
+                ->get();
+        } else {
+            $blockedUser = $authUser->usersBlocked()->pluck('blocked_id')->toArray();
+            $blockedBy = $authUser->blockedByUsers()->pluck('blocker_id')->toArray();
 
-        $usersBlockedIds = array_unique(array_merge($blockedUser, $blockedBy));
-        $users = Person::whereNotIn('id', $usersBlockedIds)->where(function ($q) use ($query) {
-            $q->where('full_name', 'ILIKE', "%$query%")
-              ->orWhere('username', 'ILIKE', "%$query%");
-        })->get();
+            $usersBlockedIds = array_unique(array_merge($blockedUser, $blockedBy));
+            $users = Person::whereNotIn('id', $usersBlockedIds)->where(function ($q) use ($query) {
+                $q->where('full_name', 'ILIKE', "%$query%")
+                  ->orWhere('username', 'ILIKE', "%$query%");
+            })->get();
+        }
 
         return response()->json(['users' => $users]);
     }

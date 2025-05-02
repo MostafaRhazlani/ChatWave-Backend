@@ -23,6 +23,7 @@ Route::middleware(['auth'])->group(function() {
     Route::put('/user/update', [PersonController::class, 'update']);
     Route::post('/user/update-image', [PersonController::class, 'updateImageProfile']);
     Route::patch('/user/change-password', [PersonController::class, 'changePassword']);
+    Route::get('/search-user', [PersonController::class, 'searchUser']);
 
     // tags api
     Route::get('/tags', [TagController::class, 'index']);
@@ -51,7 +52,6 @@ Route::middleware(['auth', 'role:user'])->group(function() {
     Route::post('/user/{userId}/toggle-follow', [PersonController::class, 'toggleFollow']);
     Route::get('/user/{id}/show', [PersonController::class, 'show']);
     Route::get('/user/users-not-follow-back', [PersonController::class, 'getAllNotFollowBack']);
-    Route::get('/search-user', [PersonController::class, 'searchUser']);
     Route::post('/user/{id}/block', [PersonController::class, 'toggleUserBlock']);
     Route::get('/user/{id}/block-status', [PersonController::class, 'blockStatus']);
     Route::get('/users/blocked', [PersonController::class, 'listUsersBlocked']);
