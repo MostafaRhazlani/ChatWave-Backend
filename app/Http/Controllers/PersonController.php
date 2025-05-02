@@ -149,9 +149,14 @@ class PersonController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Person $person)
+    public function destroy($userId)
     {
-        //
+        try {
+            Person::destroy($userId);
+            return response()->json(['message' => 'user deleted succesfully'], 200);
+        } catch (\Throwable $e) {
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
     }
 
     public function toggleUserBlock(Request $request, $id) {

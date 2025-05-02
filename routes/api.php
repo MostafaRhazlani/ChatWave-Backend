@@ -33,6 +33,7 @@ Route::middleware(['auth', 'role:admin'])->group(function() {
 
     // users api
     Route::patch('user/{userId}/ban', [PersonController::class, 'toggleUserBan']);
+    Route::delete('user/{userId}/delete', [PersonController::class, 'destroy']);
 
     // tags api
     Route::post('tag/store', [TagController::class, 'store']);
