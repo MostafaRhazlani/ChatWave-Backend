@@ -46,6 +46,9 @@ Route::middleware(['auth', 'role:admin'])->group(function() {
     Route::patch('tag/{tagId}/update', [TagController::class, 'update']);
     Route::delete('tag/{tagId}/delete', [TagController::class, 'destroy']);
     Route::get('tags/search', [TagController::class, 'searchTags']);
+
+    // posts api
+    Route::get('posts/search', [PostController::class, 'searchPosts']);
 });
 
 // end point for just user role

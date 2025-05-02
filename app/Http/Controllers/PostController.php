@@ -241,4 +241,17 @@ class PostController extends Controller
             return response()->json(['message' => $e->getMessage()], 422);
         }
     }
+
+    public function searchPosts(Request $request) {
+        try {
+            $query = $request->query('query');
+            $posts = Post::whereHas('person', function ($q) use ($query) {
+                $q->where('full_name', 'ILIKE', "%$query%");
+            })->with(['person'])->get();
+
+            return response()->json(['posts' => $posts], 200);
+        } catch (\Throwable $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
+    }
 }
