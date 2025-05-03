@@ -6,6 +6,7 @@ use App\Jobs\BroadcastPostCreatedNotification;
 use App\Models\Notification;
 use App\Models\Post;
 use App\Models\Person;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -267,6 +268,20 @@ class PostController extends Controller
             return response()->json(['message' => $post->is_banned ? 'post stopped successfully' : 'user published successfully'], 200);
         } catch (\Throwable $e) {
             return response()->json(['message' => $e->getMessage()], 400);
+        }
+    }
+
+    public function totalPosts() {
+        try {
+            $postsCount = Post::count();
+            $totalPostsInWeek = Post::whereBetween('created_at', [
+                Carbon::now()->startOfWeek(),
+                Carbon::now()->endOfWeek()
+            ])->count();
+
+            return response()->json(['postsCount' => $postsCount, 'totalPostsInWeek' => $totalPostsInWeek], 200);
+        } catch (\Throwable $e) {
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 }

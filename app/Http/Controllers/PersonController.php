@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Post;
 use App\Models\Person;
 use Illuminate\Http\Request;
@@ -265,6 +266,20 @@ class PersonController extends Controller
             return response()->json(['message' => $user->is_banned ? 'user banned successfully' : 'user unbanned successfully'], 200);
         } catch (\Throwable $e) {
             return response()->json(['message' => $e->getMessage()], 400);
+        }
+    }
+
+    public function totalUsers() {
+        try {
+            $usersCount = Person::count();
+            $totalUsersInWeek = Person::whereBetween('created_at', [
+                Carbon::now()->startOfWeek(),
+                Carbon::now()->endOfWeek()
+            ])->count();
+
+            return response()->json(['usersCount' => $usersCount, 'totalUsersInWeek' => $totalUsersInWeek], 200);
+        } catch (\Throwable $e) {
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 }

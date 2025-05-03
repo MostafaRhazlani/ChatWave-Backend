@@ -39,6 +39,7 @@ Route::middleware(['auth', 'role:admin'])->group(function() {
     // users api
     Route::patch('user/{userId}/ban', [PersonController::class, 'toggleUserBan']);
     Route::delete('user/{userId}/delete', [PersonController::class, 'destroy']);
+    Route::get('users/total', [PersonController::class, 'totalUsers']);
 
     // tags api
     Route::post('tag/store', [TagController::class, 'store']);
@@ -49,7 +50,15 @@ Route::middleware(['auth', 'role:admin'])->group(function() {
 
     // posts api
     Route::get('posts/search', [PostController::class, 'searchPosts']);
+    Route::get('posts/total', [PostController::class, 'totalPosts']);
     Route::patch('post/{postId}/status', [PostController::class, 'toggleStatusPost']);
+
+    // messages api
+    Route::get('messages/total', [MessageController::class, 'totalMessages']);
+
+    // comments api
+    Route::get('comments/total', [CommentController::class, 'totalComments']);
+
 });
 
 // end point for just user role

@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Person;
 use App\Models\Message;
-use App\Jobs\SendChatMessage;
 use Illuminate\Http\Request;
+use App\Jobs\SendChatMessage;
 
 class MessageController extends Controller
 {
@@ -167,5 +168,19 @@ class MessageController extends Controller
     public function destroy($id) {
         Message::destroy($id);
         return response()->json(['message' => 'message deleted successfully']);
+    }
+
+    public function totalMessages() {
+        try {
+            $messagesCount = Message::count();
+            $totalMessagesInWeek = Message::whereBetween('created_at', [
+                Carbon::now()->startOfWeek(),
+                Carbon::now()->endOfWeek()
+            ])->count();
+
+            return response()->json(['messagesCount' => $messagesCount, 'totalMessagesInWeek' => $totalMessagesInWeek], 200);
+        } catch (\Throwable $e) {
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
     }
 }

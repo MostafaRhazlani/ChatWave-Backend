@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Post;
 use App\Models\Comment;
 use App\Events\CommentAdded;
@@ -121,6 +122,20 @@ class CommentController extends Controller
             return response()->json(['message' => 'comment deleted successfully'], 200);
         } catch (\Throwable $e) {
             return response()->json(['message' => $e->getMessage()], 400);
+        }
+    }
+
+    public function totalComments() {
+        try {
+            $commentsCount = Comment::count();
+            $totalCommentsInWeek = Comment::whereBetween('created_at', [
+                Carbon::now()->startOfWeek(),
+                Carbon::now()->endOfWeek()
+            ])->count();
+
+            return response()->json(['commentsCount' => $commentsCount, 'totalCommentsInWeek' => $totalCommentsInWeek], 200);
+        } catch (\Throwable $e) {
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 }
