@@ -40,6 +40,7 @@ Route::middleware(['auth', 'role:admin'])->group(function() {
     Route::patch('user/{userId}/ban', [PersonController::class, 'toggleUserBan']);
     Route::delete('user/{userId}/delete', [PersonController::class, 'destroy']);
     Route::get('users/total', [PersonController::class, 'totalUsers']);
+    Route::get('users/top-five-followed', [PersonController::class, 'topFiveFollowedUsers']);
 
     // tags api
     Route::post('tag/store', [TagController::class, 'store']);
@@ -52,6 +53,7 @@ Route::middleware(['auth', 'role:admin'])->group(function() {
     Route::get('posts/search', [PostController::class, 'searchPosts']);
     Route::get('posts/total', [PostController::class, 'totalPosts']);
     Route::patch('post/{postId}/status', [PostController::class, 'toggleStatusPost']);
+    Route::get('posts/last-five', [PostController::class, 'lastFivePosts']);
 
     // messages api
     Route::get('messages/total', [MessageController::class, 'totalMessages']);

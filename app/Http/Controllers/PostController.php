@@ -250,7 +250,7 @@ class PostController extends Controller
             $query = $request->query('query');
             $posts = Post::whereHas('person', function ($q) use ($query) {
                 $q->where('full_name', 'ILIKE', "%$query%");
-            })->with(['person'])->get();
+            })->with(['person'])->withCount('likes', 'comments')->get();
 
             return response()->json(['posts' => $posts], 200);
         } catch (\Throwable $e) {
@@ -280,6 +280,21 @@ class PostController extends Controller
             ])->count();
 
             return response()->json(['postsCount' => $postsCount, 'totalPostsInWeek' => $totalPostsInWeek], 200);
+        } catch (\Throwable $e) {
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function lastFivePosts() {
+
+        try {
+            $posts = Post::select('id', 'media', 'type', 'created_at', 'is_banned', 'person_id')
+            ->with(['person'])
+            ->orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get();
+
+            return response()->json(['lastFivePosts' => $posts], 200);
         } catch (\Throwable $e) {
             return response()->json(['message' => $e->getMessage()], 500);
         }

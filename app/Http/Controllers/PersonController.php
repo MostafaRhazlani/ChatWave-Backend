@@ -282,4 +282,18 @@ class PersonController extends Controller
             return response()->json(['message' => $e->getMessage()], 500);
         }
     }
+
+    public function topFiveFollowedUsers() {
+        try {
+            $users = Person::select('id', 'full_name', 'username', 'image', 'is_banned', 'is_logged')->where('role', '!=', 'admin')
+                    ->withCount('followers')
+                    ->orderBy('followers_count', 'desc')
+                    ->limit(5)
+                    ->get();
+
+            return response()->json(['users' => $users], 200);
+        } catch (\Throwable $e) {
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
 }
