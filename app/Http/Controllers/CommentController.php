@@ -28,14 +28,6 @@ class CommentController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create(Request $request)
-    {
-
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
@@ -74,14 +66,6 @@ class CommentController extends Controller
         } catch (\Throwable $e) {
             return response()->json(['message' => $e->getMessage()], 400);
         }
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Comment $comment)
-    {
-        //
     }
 
     /**
