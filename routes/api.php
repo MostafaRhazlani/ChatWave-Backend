@@ -74,6 +74,7 @@ Route::middleware(['auth', 'role:user'])->group(function() {
     Route::post('/user/{id}/block', [PersonController::class, 'toggleUserBlock']);
     Route::get('/user/{id}/block-status', [PersonController::class, 'blockStatus']);
     Route::get('/users/blocked', [PersonController::class, 'listUsersBlocked']);
+    Route::get('/users/online', [PersonController::class, 'onlineFriends']);
     Route::patch('logout', [AuthController::class, 'logout']);
 
     // messages api
@@ -91,7 +92,7 @@ Route::middleware(['auth', 'role:user'])->group(function() {
     Route::get('my-saved/posts', [SaveController::class, 'mySavedPosts']);
 
     // posts api
-    Route::post('/post/create', [PostController::class, 'create']);
+    Route::post('/post/create', [PostController::class, 'store']);
     Route::get('/post/{id}/show', [PostController::class, 'show']);
     Route::get('/post/{id}/edit', [PostController::class, 'edit']);
     Route::post('/post/{id}/update', [PostController::class, 'update']);

@@ -25,7 +25,7 @@ class PersonController extends Controller
 
             $usersBlockedIds = array_unique(array_merge($blockedUser, $blockedBy));
 
-            $randomUsers = Person::whereNotIn('id', $usersBlockedIds)->inRandomOrder()->limit(3)->get();
+            $randomUsers = Person::whereNotIn('id', $usersBlockedIds)->where('role', '!=', 'admin')->inRandomOrder()->limit(3)->get();
             return response()->json(['randomUsers' => $randomUsers]);
         }
     }
@@ -292,6 +292,23 @@ class PersonController extends Controller
                     ->get();
 
             return response()->json(['users' => $users], 200);
+        } catch (\Throwable $e) {
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function onlineFriends(Request $request) {
+
+        $authUser = $request->user();
+
+        try {
+            $followerIds = $authUser->followers()->pluck('person_id')->toArray();
+            $followingIds = $authUser->following()->pluck('followed_person_id')->toArray();
+
+            $friends = array_unique(array_merge($followerIds, $followingIds));
+            $onlineFriends = Person::whereIn('id', $friends)->where('is_logged', true)->get();
+
+            return response()->json(['onlineFriends' => $onlineFriends], 200);
         } catch (\Throwable $e) {
             return response()->json(['message' => $e->getMessage()], 500);
         }
