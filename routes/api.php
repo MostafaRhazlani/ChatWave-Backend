@@ -104,8 +104,8 @@ Route::middleware(['auth', 'role:user'])->group(function() {
     Route::delete('/comment/{id}/delete', [CommentController::class, 'destroy']);
 
     // likes api
-    Route::post('/like/add', [LikeController::class, 'create']);
-    Route::post('/like/show', [LikeController::class, 'show']);
+    Route::post('/like/add', [LikeController::class, 'store']);
+    Route::post('/like/show', [LikeController::class, 'likesCount']);
     Route::delete('/like/delete', [LikeController::class, 'destroy']);
 
     // notifications api

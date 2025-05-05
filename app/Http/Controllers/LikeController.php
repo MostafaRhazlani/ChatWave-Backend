@@ -8,17 +8,9 @@ use Illuminate\Http\Request;
 class LikeController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Store a newly created resource in storage.
      */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create(Request $request)
+    public function store(Request $request)
     {
         $userId = $request->user()->id;
         $validated = $request->validate([
@@ -42,21 +34,12 @@ class LikeController extends Controller
         } catch (\Throwable $e) {
             return response()->json(['message' => $e->getMessage()], 400);
         }
-
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Request $request)
+    public function likesCount(Request $request)
     {
         $validated = $request->validate([
             'post_id' => 'required|numeric',
@@ -70,22 +53,6 @@ class LikeController extends Controller
         } catch (\Throwable $e) {
             return response()->json(['message' => $e->getMessage()], 400);
         }
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Like $like)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Like $like)
-    {
-        //
     }
 
     /**
